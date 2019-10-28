@@ -8,6 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json())
 
+app.post('/api/users', postUser)
 app.get('/api/users', getAllUsers)
 app.get('/api/users/:id', getUserById)
 app.get('*', handleDefaultRequest)
@@ -16,7 +17,27 @@ function handleDefaultRequest(req, res) {
     res.json('Its working')
 }
 
-function getAllUsers (req, res) {
+function postUser(req, res) {
+
+   const { name, bio } = req.body
+   
+    if (name && bio) {
+        const user = {
+            name: name,
+            bio: bio
+        }
+        db.add(user)
+            .then(data => {
+                console.log(data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+}
+
+function getAllUsers(req, res) {
     db.find()
         .then(data => {
             console.log(data)
@@ -25,7 +46,7 @@ function getAllUsers (req, res) {
         .catch(err => {
             console.log(err)
             res.status(500).json({
-                message:'The users information could not be retrieved'
+                message: 'The users information could not be retrieved'
             })
         })
 }
@@ -39,7 +60,7 @@ function getUserById(req, res) {
         })
         .catch(error => {
             res.status(404).json({
-                message:'The user with the specified ID does not exist.'
+                message: 'The user with the specified ID does not exist.'
             })
         })
 }
