@@ -11,7 +11,7 @@ app.use(express.json())
 app.post('/api/users', postUser)
 app.get('/api/users', getAllUsers)
 app.get('/api/users/:id', getUserById)
-app.get('/api/users/:id', deleteUser)
+app.delete('/api/users/:id', deleteUser)
 app.get('*', handleDefaultRequest)
 
 function handleDefaultRequest(req, res) {
@@ -27,7 +27,7 @@ function postUser(req, res) {
             name: name,
             bio: bio
         }
-        db.add(user)
+        db.insert(user)
             .then(data => {
                 console.log(data)
                 res.status(200).json(data)
@@ -73,7 +73,25 @@ function getUserById(req, res) {
         })
 }
 
-
+function deleteUser(req, res) {
+    const { id } = req.params;
+    if (id) {
+        db.remove(id)
+         .then(data => {
+             res.status(200).json(data)
+            console.log(data)
+         })
+         .catch(error => {
+             res.status(500).json({
+                 message: 'The user could not be removed'
+             })
+         })
+    } else {
+        res.status(404).json({
+            message: 'The user with the specified ID does not exist.'
+        })
+    }
+}
 
 app.listen(process.env.PORT || 4000, () => {
     console.log('port is listening on ' + (process.env.PORT || 4000))
