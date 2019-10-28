@@ -12,6 +12,7 @@ app.post('/api/users', postUser)
 app.get('/api/users', getAllUsers)
 app.get('/api/users/:id', getUserById)
 app.delete('/api/users/:id', deleteUser)
+app.put('/api/users/:id', updateUser)
 app.get('*', handleDefaultRequest)
 
 function handleDefaultRequest(req, res) {
