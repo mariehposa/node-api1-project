@@ -10,6 +10,7 @@ app.use(express.json())
 
 app.get('/api/users', getAllUsers)
 app.get('*', handleDefaultRequest)
+app.get('/api/users/:id', getUserById)
 
 function handleDefaultRequest(req, res) {
     res.json('Its working')
@@ -19,10 +20,14 @@ function getAllUsers (req, res) {
     db.find()
         .then(data => {
             console.log(data)
-            res.json(data)
+            res.status(500).json(data)
         })
         .catch(err => {
             console.log(err)
+            res.json({
+                message:'The users information could not be retrieved',
+                err: "error 404"
+            })
         })
 }
 
