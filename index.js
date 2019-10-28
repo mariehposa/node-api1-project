@@ -37,7 +37,9 @@ function postUser(req, res) {
                 })
             })
     } else {
-        
+        res.status(404).json({
+            message: 'Please provide name and bio for the user.'
+        })
     }
 
 }
