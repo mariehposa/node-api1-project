@@ -21,8 +21,8 @@ function handleDefaultRequest(req, res) {
 
 function postUser(req, res) {
 
-   const { name, bio } = req.body
-   
+    const { name, bio } = req.body
+
     if (name && bio) {
         const user = {
             name: name,
@@ -31,16 +31,16 @@ function postUser(req, res) {
         db.insert(user)
             .then(data => {
                 console.log(data)
-                res.status(200).json(data)
+                res.status(201).json(data)
             })
             .catch(err => {
                 res.status(500).json({
-                    message: 'There was an error while saving the user to the database'
+                    error: 'There was an error while saving the user to the database'
                 })
             })
     } else {
-        res.status(404).json({
-            message: 'Please provide name and bio for the user.'
+        res.status(400).json({
+            errorMessage: 'Please provide name and bio for the user.'
         })
     }
 
@@ -55,41 +55,84 @@ function getAllUsers(req, res) {
         .catch(err => {
             console.log(err)
             res.status(500).json({
-                message: 'The users information could not be retrieved'
+                error: 'The users information could not be retrieved'
             })
         })
 }
 
 function getUserById(req, res) {
     const { id } = req.params;
-    db.findById(id)
-        .then(data => {
-            console.log(data)
-            res.status(200).json(data)
-        })
-        .catch(error => {
-            res.status(404).json({
-                message: 'The user with the specified ID does not exist.'
+    if (id) {
+        db.findById(id)
+            .then(data => {
+                console.log(data)
+                res.status(200).json(data)
             })
+            .catch(error => {
+                res.status(500).json({
+                    error: 'The user with the specified ID does not exist.'
+                })
+            })
+    } else {
+        res.status(404).json({
+            message: "The user with the specified ID does not exist."
         })
+    }
 }
 
 function deleteUser(req, res) {
     const { id } = req.params;
     if (id) {
         db.remove(id)
-         .then(data => {
-             res.status(200).json(data)
-            console.log(data)
-         })
-         .catch(error => {
-             res.status(500).json({
-                 message: 'The user could not be removed'
-             })
-         })
+            .then(data => {
+                res.status(200).json(data)
+                console.log(data)
+            })
+            .catch(error => {
+                res.status(500).json({
+                    error: 'The user could not be removed'
+                })
+            })
     } else {
         res.status(404).json({
             message: 'The user with the specified ID does not exist.'
+        })
+    }
+}
+
+function updateUser(req, res) {
+    const { id } = req.params;
+    const { name, bio } = req.body;
+    if (name && bio) {
+        db.update(id, req.body)
+            .then(data => {
+                if (data == '1') {
+                    db.findById()
+                        .then(users => {
+                            console.log(users)
+                            res.status(200).json(users)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.status(500).json({
+                                error: 'The users information could not be modified'
+                            })
+                        })
+                }
+                else {
+                    res.status(404).json({ 
+                        message: "The user with the specified ID does not exist." 
+                    })
+                }
+            })
+            .catch(error => {
+                res.status(500).json({
+                    error: "The user could not be removed"
+                })
+            })
+    } else {
+        res.status(400).json({
+            errorMessage: "Please provide name and bio for the user."
         })
     }
 }
