@@ -29,10 +29,15 @@ function postUser(req, res) {
         db.add(user)
             .then(data => {
                 console.log(data)
+                res.status(200).json(data)
             })
             .catch(err => {
-                console.log(err)
+                res.status(500).json({
+                    message: 'There was an error while saving the user to the database'
+                })
             })
+    } else {
+        
     }
 
 }
