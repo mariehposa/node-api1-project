@@ -11,6 +11,7 @@ app.use(express.json())
 app.post('/api/users', postUser)
 app.get('/api/users', getAllUsers)
 app.get('/api/users/:id', getUserById)
+app.get('/api/users/:id', deleteUser)
 app.get('*', handleDefaultRequest)
 
 function handleDefaultRequest(req, res) {
