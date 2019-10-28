@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json())
 
 app.get('*', handleDefaultRequest)
+app.get('/api/users', getAllUsers)
 
 function handleDefaultRequest(req, res) {
     res.json('Its working')
